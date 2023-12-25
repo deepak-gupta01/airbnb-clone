@@ -1,4 +1,4 @@
-if(process.env.NODE_ENV != "production"){
+if (process.env.NODE_ENV != "production") {
     require("dotenv").config();
 }
 
@@ -48,10 +48,10 @@ const store = MongoStore.create({
     crypto: {
         secret: process.env.SECRETE,
     },
-    touchAfter: 24*3600,
+    touchAfter: 24 * 3600,
 });
 
-store.on("error",()=>{
+store.on("error", () => {
     console.log("ERROR in MONGO SESSION STORE");
 });
 
@@ -59,8 +59,8 @@ const sessionOptions = {
     store,
     secret: process.env.SECRETE, resave: false, saveUninitialized: true,
     cookie: {
-        expires: Date.now + 7 * 24 * 60 *60 *1000,
-        maxAge: 7 * 24 * 60 *60 *1000,
+        expires: Date.now + 7 * 24 * 60 * 60 * 1000,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
     }
 };
@@ -80,26 +80,26 @@ passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
-app.use((req,res,next)=>{
+app.use((req, res, next) => {
     res.locals.success = req.flash("success");
     res.locals.error = req.flash("error");
     res.locals.currUser = req.user;
     next();
 });
 
-app.get("/demouser",async(req,res)=>{
+app.get("/demouser", async (req, res) => {
     let fakeUser = new User({
-        email:"student@gmail.com",
+        email: "student@gmail.com",
         username: "delta-student"
     });
 
-    let registeredUser = await User.register(fakeUser,"helloworld");
+    let registeredUser = await User.register(fakeUser, "helloworld");
     res.send(registeredUser);
 });
 
 app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
-app.use("/",userRouter);
+app.use("/", userRouter);
 
 app.all("*", (req, res, next) => {
     next(new ExpressError(404, "Page not found"));
